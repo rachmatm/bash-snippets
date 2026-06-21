@@ -11,6 +11,7 @@ A curated collection of modular Bash snippets, aliases, and functions to optimiz
 3. **Create the directories:**
    ```bash
    mkdir -p ~/.bash-snippets/{prompt,aliases,automation,ssh}
+   #git clone git@github.com:rachmatm/bash-snippets.git ~/.bash-snippets
    ```
 4. **Save your scripts** into their respective folders (e.g., `~/.bash-snippets/prompt/toggle.sh`).
 5. **Reload your terminal:**
