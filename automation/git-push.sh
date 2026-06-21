@@ -1,8 +1,8 @@
 # ====================================================================
-# AUTOMATION: QUICK GIT PUSH STRIP WITH BRANCH CHECK
+# AUTOMATION: QUICK GIT PUSH STRIP WITH BRANCH CHECK & FILE PREVIEW
 # ====================================================================
 
-# Usage: gitpush (No parameters needed)
+# Usage: gitpush
 gitpush() {
     # 1. Protection: Ensure this is a valid Git repository
     if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
@@ -25,15 +25,20 @@ gitpush() {
     echo "✅ Branch confirmed."
     echo "---------------------------------"
 
-    # 4. Check for local modifications before asking for a message
+    # 4. Check for local modifications before proceeding
     if [ -z "$(git status --porcelain)" ]; then
         echo "✨ Nothing to commit. Your working tree is already perfectly clean!"
         return 0
     fi
 
-    # 5. Interactive Prompt: Ask for the commit message
-    echo "📝 Local modifications detected."
-    read -p "💬 Enter your commit message: " msg
+    # 5. Display the files that will be pushed
+    echo "🔍 The following files will be staged and pushed:"
+    echo "---------------------------------"
+    git status -s  # Prints a clean, short list with color codes (M = Modified, A = Added, ?? = Untracked)
+    echo "---------------------------------"
+
+    # 6. Interactive Prompt: Ask for the commit message
+    read -p "💬 Enter your commit message to confirm: " msg
 
     # Fallback: Abort if you press enter without typing anything
     if [ -z "$msg" ]; then
@@ -41,7 +46,7 @@ gitpush() {
         return 1
     fi
 
-    # 6. Automated Pipeline Execution
+    # 7. Automated Pipeline Execution
     echo "📦 Staging all local modifications..."
     git add .
 
