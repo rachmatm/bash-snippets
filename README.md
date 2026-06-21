@@ -1,7 +1,7 @@
 # bash-snippets
 A curated collection of modular Bash snippets, aliases, and functions to optimize terminal workflows and customize productivity.
 
-# Setup Instructions
+## Setup Instructions
 
 1. **Open your bashrc file:**
    ```bash
@@ -21,25 +21,20 @@ A curated collection of modular Bash snippets, aliases, and functions to optimiz
 
 ---
 
-# Master Snippet Loader Code
+## Reloading Changes: source vs exec bash
+
+When I update my snippets or modify my `~/.bashrc`, I need to reload the shell configuration. While running `source ~/.bashrc` is common, using `exec bash` is much safer when managing and testing new shell scripts.
+
+### Why I use `exec bash` instead of `source`
+
+* **Complete Memory Reset:** `source` appends new changes *on top* of the active session. It cannot erase old, broken shell functions, corrupted variables, or background loops. `exec bash` kills the old shell process entirely and swaps it with a brand-new instance, wiping the slate clean.
+* **Prevents Environment Stacking:** If my scripts modify environmental configurations like the `$PATH` variable, running `source` repeatedly will continuously append duplicate paths. `exec bash` initializes the environment fresh, loading variables exactly once.
+* **Instant Recovery:** If a faulty snippet or a recursive loop breaks or freezes my terminal session, typing `exec bash` acts as an immediate safety valve to reset the prompt to a clean state without needing to close the terminal window.
+
+### How to use it
+
+Whenever I make updates to my snippets or configurations, I apply them by running:
 
 ```bash
-# ====================================================================
-# MASTER SNIPPET LOADER
-# ====================================================================
-
-# Define the absolute path to your collection directory
-SNIPPETS_DIR="\$HOME/.bash-snippets"
-
-# Dynamically find and source all script files
-if [ -d "\$SNIPPETS_DIR" ]; then
-    # Loop through all files ending in .sh inside the folder and subfolders
-    for script in \((find "\)SNIPPETS_DIR" -type f -name "*.sh" | sort); do
-        # Verify the file is readable before sourcing to prevent terminal crashes
-        if [ -r "\$script" ]; then
-            source "\$script"
-        fi
-    done
-    unset script # Clean up the loop variable from shell memory
-fi
+exec bash
 ```
