@@ -15,14 +15,14 @@
 # Define the absolute path to your collection directory
 SNIPPETS_DIR="$HOME/.bash-snippets"
 
-# Dynamically find and source all script files
 if [ -d "$SNIPPETS_DIR" ]; then
-    # Loop through all files ending in .sh inside the folder and subfolders
-    for script in $(find "$SNIPPETS_DIR" -type f -name "*.sh" | sort); do
-        # Verify the file is readable before sourcing to prevent terminal crashes
-        if [ -r "$script" ]; then
+    # Use standard shell globbing instead of 'find' to prevent recursive loop triggers
+    # This natively checks directories safely without launching subshells
+    for script in "$SNIPPETS_DIR"/*/*.sh; do
+        # Ensure the file exists and is readable
+        if [ -f "$script" ] && [ -r "$script" ]; then
             source "$script"
         fi
     done
-    unset script # Clean up the loop variable from shell memory
+    unset script
 fi
