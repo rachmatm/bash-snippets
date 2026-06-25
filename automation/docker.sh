@@ -119,3 +119,46 @@ docker_refresh() {
     
     echo "Stack refreshed successfully."
 }
+
+# Function 5: Stop an auto-starting container and disable its restart policy
+docker_stop_auto() {
+    if [ -z "$1" ]; then
+        echo "Error: Please provide a container name or ID."
+        echo "Usage: docker_stop_auto <container_name_or_id>"
+        return 1
+    fi
+
+    local target=$1
+
+    # Verify container exists
+    if ! docker ps -a --format '{{.Names}} {{.ID}}' | grep -q "$target"; then
+        echo "Error: Container '$target' not found."
+        return 1
+    fi
+
+    echo "Disabling automatic restart policy for: $target"
+    docker update --restart=no "$target" >/dev/null
+
+    echo "Stopping container: $target"
+    docker stop "$target" >/dev/null
+
+    echo "Container $target has been stopped and will no longer boot automatically."
+}
+
+# Function 6: Disable auto-restart and stop all running containers
+docker_stop_auto_all() {
+    # Check if there are any running containers
+    if [ -z "$(docker ps -q)" ]; then
+        echo "No running containers found."
+        return 0
+    fi
+
+    echo "Disabling automatic restart policies for all running containers..."
+    docker update --restart=no $(docker ps -q) >/dev/null
+
+    echo "Stopping all running containers..."
+    docker stop $(docker ps -q) >/dev/null
+
+    echo "Success. All containers have been stopped and automatic restarts are disabled."
+}
+
