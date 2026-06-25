@@ -103,3 +103,19 @@ docker_enter() {
         docker exec -it "$target" sh
     fi
 }
+
+# Function 4: Force a complete stop and fresh recreation of the compose stack
+docker_refresh() {
+    if [ ! -f "docker-compose.yml" ] && [ ! -f "docker-compose.yaml" ] && [ ! -f "compose.yaml" ]; then
+        echo "Error: No Docker Compose file found in the current directory."
+        return 1
+    fi
+
+    echo "Stopping and removing current compose containers..."
+    docker compose down --remove-orphans
+
+    echo "Starting fresh container instances..."
+    docker compose up -d
+    
+    echo "Stack refreshed successfully."
+}
