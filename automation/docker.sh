@@ -162,3 +162,44 @@ docker_stop_auto_all() {
     echo "Success. All containers have been stopped and automatic restarts are disabled."
 }
 
+# ==========================================
+# Sudo Wrapper Functions
+# ==========================================
+
+sudo_docker_wipe_all() {
+    sudo bash -c "$(declare -f docker_wipe_all); docker_wipe_all"
+}
+
+sudo_docker_purge_target() {
+    if [ -z "$1" ]; then
+        echo "Error: Please provide a container name or ID."
+        return 1
+    fi
+    sudo bash -c "$(declare -f docker_purge_target); docker_purge_target \"\$1\"" bash "$1"
+}
+
+sudo_docker_enter() {
+    if [ -z "$1" ]; then
+        echo "Error: Please provide a container name or ID."
+        return 1
+    fi
+    # -t flag is explicitly passed to sudo to preserve terminal allocation for interactive shells
+    sudo -t bash -c "$(declare -f docker_enter); docker_enter \"\$1\"" bash "$1"
+}
+
+sudo_docker_refresh() {
+    sudo bash -c "$(declare -f docker_refresh); docker_refresh"
+}
+
+sudo_docker_stop_auto() {
+    if [ -z "$1" ]; then
+        echo "Error: Please provide a container name or ID."
+        return 1
+    fi
+    sudo bash -c "$(declare -f docker_stop_auto); docker_stop_auto \"\$1\"" bash "$1"
+}
+
+sudo_docker_stop_auto_all() {
+    sudo bash -c "$(declare -f docker_stop_auto_all); docker_stop_auto_all"
+}
+
