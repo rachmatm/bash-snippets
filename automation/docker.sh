@@ -120,6 +120,26 @@ docker_refresh() {
     echo "Stack refreshed successfully."
 }
 
+# Function 4b: Rebuild the compose stack (down, build --no-cache, up)
+# This performs a full recreate with no build cache. Useful when you want a clean build.
+docker_compose_rebuild() {
+    if [ ! -f "docker-compose.yml" ] && [ ! -f "docker-compose.yaml" ] && [ ! -f "compose.yaml" ]; then
+        echo "Error: No Docker Compose file found in the current directory."
+        return 1
+    fi
+
+    echo "Bringing down compose stack (removing orphans)..."
+    docker compose down --remove-orphans
+
+    echo "Building images without cache..."
+    docker compose build --no-cache
+
+    echo "Starting compose stack..."
+    docker compose up -d
+
+    echo "Compose rebuild complete."
+}
+
 # Function 5: Stop an auto-starting container and disable its restart policy
 docker_stop_auto() {
     if [ -z "$1" ]; then
@@ -191,6 +211,10 @@ sudo_docker_refresh() {
     sudo bash -c "$(declare -f docker_refresh); docker_refresh"
 }
 
+sudo_docker_compose_rebuild() {
+    sudo bash -c "$(declare -f docker_compose_rebuild); docker_compose_rebuild"
+}
+
 sudo_docker_stop_auto() {
     if [ -z "$1" ]; then
         echo "Error: Please provide a container name or ID."
@@ -202,4 +226,3 @@ sudo_docker_stop_auto() {
 sudo_docker_stop_auto_all() {
     sudo bash -c "$(declare -f docker_stop_auto_all); docker_stop_auto_all"
 }
-
