@@ -62,3 +62,30 @@ gitpush() {
         echo "❌ Error: Failed to push to remote repository."
     fi
 }
+
+
+# Pull updates for a repository without leaving the current directory
+git_pull_external() {
+    if [ -z "$1" ]; then
+        echo "Error: Please provide the folder path to the repository."
+        echo "Usage: git_pull_external /path/to/folder"
+        return 1
+    fi
+
+    local target_dir=$1
+
+    # Check if directory exists
+    if [ ! -d "$target_dir" ]; then
+        echo "Error: Directory '$target_dir' does not exist."
+        return 1
+    fi
+
+    # Check if directory is a valid Git repository
+    if ! git -C "$target_dir" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        echo "Error: Directory '$target_dir' is not a Git repository."
+        return 1
+    fi
+
+    echo "Fetching and pulling updates inside: $target_dir"
+    git -C "$target_dir" pull
+}
